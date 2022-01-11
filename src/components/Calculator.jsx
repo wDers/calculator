@@ -4,6 +4,9 @@ import { BiSun } from "react-icons/bi";
 import { BsMoon } from "react-icons/bs";
 import useDarkMode from "../hooks/useDarkMode";
 
+/* eslint no-eval: 0 */
+/* eslint-disable no-unused-vars */
+
 const Calculator = () => {
   const btnsRef = useRef(null);
   const expRef = useRef(null);
