@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn__op {
+  color: #d76061 !important;
+}
+
+.btn__op:nth-child(1),
+.btn__op:nth-child(2),
+.btn__op:nth-child(3) {
+  color: #26dbbb !important;
+}
