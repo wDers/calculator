@@ -7,39 +7,40 @@ import useDarkMode from "../hooks/useDarkMode";
 /* eslint no-eval: 0 */
 /* eslint-disable no-unused-vars */
 
-const Calculator = () => {
-  const btnsRef = useRef(null);
-  const expRef = useRef(null);
-
+function Calculator(props) {
   const [expression, setExpression] = useState("");
   const [darkTheme, setDarkTheme] = useDarkMode();
 
+  const expRef = useRef(null);
+
   const handleClick = (item) => {
     const expDiv = expRef.current;
+    const action = item.action;
 
-    if (item.action === BTN_ACTIONS.ADD) {
+    if (action === BTN_ACTIONS.ADD) {
       animateSpan(item.display);
       const oper = item.display !== "x" ? item.display : "*";
       setExpression(expression + oper);
     }
 
-    if (item.action === BTN_ACTIONS.DELETE) {
+    if (action === BTN_ACTIONS.DELETE) {
       expDiv.parentNode.querySelector("div:last-child").innerHTML = "";
       expDiv.innerHTML = "";
       setExpression("");
     }
 
-    if (item.action === BTN_ACTIONS.RELOAD) document.location.reload();
+    if (action === BTN_ACTIONS.RELOAD) document.location.reload();
 
-    if (item.action === BTN_ACTIONS.CALC) {
+    if (action === BTN_ACTIONS.CALC) {
       if (expression.trim().length <= 0) return;
 
       expDiv.parentNode.querySelector("div:last-child").remove();
 
       const cloneNode = expDiv.cloneNode(true);
+      const style = cloneNode.style;
 
       expDiv.parentNode.appendChild(cloneNode);
-      cloneNode.style.opacity = 0;
+      style.opacity = 0;
 
       const transform = `translateY(${-(
         expDiv.offsetHeight - 30
@@ -52,12 +53,12 @@ const Calculator = () => {
         setExpression(res.toString());
 
         setTimeout(() => {
-          cloneNode.style.transform = transform;
-          cloneNode.style.opacity = 1;
-          cloneNode.style.position = "absolute";
-          cloneNode.style.top = "-0.5rem";
-          cloneNode.style.fontWeight = "400";
-          cloneNode.style.width = "125%";
+          style.transform = transform;
+          style.opacity = 1;
+          style.position = "absolute";
+          style.top = "-0.5rem";
+          style.fontWeight = "400";
+          style.width = "125%";
 
           for (let i = 0; i < cloneNode.children.length; i++) {
             const span = cloneNode.children.item(i);
@@ -80,7 +81,7 @@ const Calculator = () => {
         }, 200);
       } catch {
         setTimeout(() => {
-          cloneNode.style.transform = transform;
+          style.transform = transform;
           cloneNode.innerHTML = "Syntax err";
         }, 200);
       }
@@ -90,31 +91,33 @@ const Calculator = () => {
   const animateSpan = (content) => {
     const expDiv = expRef.current;
     const span = document.createElement("span");
+    const style = span.style;
 
     span.innerHTML = String(content).replace(/(.)(?=(\d{3})+$)/g, "$1,");
 
-    span.style.opacity = "0";
-    span.style.display = "inline-block";
-    span.style.overflow = "hidden";
-    span.style.transition = "width 0.3s ease";
+    style.opacity = "0";
+    style.display = "inline-block";
+    style.overflow = "hidden";
+    style.transition = "width 0.3s ease";
     expDiv.appendChild(span);
 
     const width = `${span.offsetWidth}px`;
-    span.style.width = "0";
+    style.width = "0";
 
     setTimeout(() => {
-      span.style.opacity = "1";
-      span.style.width = width;
+      style.opacity = "1";
+      style.width = width;
     }, 100);
   };
 
   const handleColorChange = () => {
     const expDiv = expRef.current;
     const cloneNode = expDiv.cloneNode(true);
+    const style = cloneNode.style;
 
     document.body.classList.contains("dark")
-      ? (cloneNode.style.color = "#fff")
-      : (cloneNode.style.color = "#7a7c81");
+      ? (style.color = "#fff")
+      : (style.color = "#7a7c81");
   };
 
   return (
@@ -123,16 +126,14 @@ const Calculator = () => {
         <div className="h-2 w-[6.5rem] h-10 bg-bg rounded-full flex justify-between items-center dark:bg-[#292d36]">
           <div
             className="h-[inherit] flex justify-between items-center cursor-pointer"
-            onClick={() => setDarkTheme(false)}
-            onClickCapture={() => handleColorChange()}
+            onClick={() => setDarkTheme(false) & handleColorChange()}
           >
             <BiSun className="mx-3 w-[23px] h-[23px] text-[#2f323b] dark:text-[#787A7F]" />
           </div>
           <div className="h-[inherit] flex justify-between items-center cursor-pointer">
             <BsMoon
               className="mx-3 w-[20px] h-[20px] text-[#dedede] dark:text-white"
-              onClick={() => setDarkTheme(true)}
-              onClickCapture={() => handleColorChange()}
+              onClick={() => setDarkTheme(true) & handleColorChange()}
             />
           </div>
         </div>
@@ -144,10 +145,7 @@ const Calculator = () => {
         ></div>
         <div className="absolute right-0"></div>
       </div>
-      <div
-        className="h-[27rem] min-w-[280px] grid grid-cols-4 gap-1 place-items-center bg-bg px-5 pb-5 rounded-t-[2.25rem] md:px-6 dark:bg-[#292d36]"
-        ref={btnsRef}
-      >
+      <div className="h-[27rem] min-w-[280px] grid grid-cols-4 gap-1 place-items-center bg-bg px-5 pb-5 rounded-t-[2.25rem] md:px-6 dark:bg-[#292d36]">
         {btns.map((item, index) => (
           <button
             key={index}
@@ -160,6 +158,6 @@ const Calculator = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Calculator;
